@@ -1,16 +1,8 @@
-# 一键部署「Deploy to Cloudflare」会读这个文件，在部署页提示你填这些密钥。
-# 也可部署后在 CF 面板 → Worker → 变量和秘密 添加/修改。
+# 一键部署「Deploy to Cloudflare」会读这个文件，在部署页提示填这些。
+# 这里只留唯一必填项，让部署页最简洁。其余可选项（VAPID / APNS_RELAY）不列出——
+# 留空时代码会自动兜底（VAPID 首次自动生成存 KV；iOS 走糯叽机默认中转）。
+# 想自定义这些可选项 → 部署后在 CF 面板 → Worker → 变量和秘密 手动添加。
 
 # 【必填】手机 App 与本后端的共享密钥。随便一个长随机串（如 32 位字符）。
 # 同一个值要填到 App 设置页的「中继密钥」里，两端一致才放行。
 RELAY_SECRET=
-
-# 【可选】Web Push (VAPID)。留空则后端首次需要时自动生成一对存 KV（零操作即可用 PWA 推送）。
-# 想用自己的固定密钥才填（npx web-push generate-vapid-keys 生成）。
-VAPID_PUBLIC_KEY=
-VAPID_PRIVATE_KEY=
-VAPID_SUBJECT=
-
-# 【可选】iOS 推送中转。留空则用糯叽机默认中心中转（开箱即用）。想自建才填。
-APNS_RELAY_URL=
-APNS_RELAY_SECRET=
