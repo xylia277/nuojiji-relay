@@ -173,10 +173,15 @@ export function createApp() {
         try { body = await c.req.json(); } catch { return c.json({ error: 'invalid json' }, 400); }
         const { inboxId, subscription, channel } = body || {};
         if (!inboxId || !subscription) return c.json({ error: 'inboxId / subscription required' }, 400);
-        const { sub } = await getStores(c.env);
         // 默认 web 通道（PWA）；apns/fcm 由套壳显式带 channel
         const entry = subscription.channel ? subscription : { channel: channel || 'web', sub: subscription };
-        await sub.add(inboxId, entry);
+        try {
+            const { sub } = await getStores(c.env);
+            await sub.add(inboxId, entry);
+        } catch (e) {
+            // 把真实异常返回（而非裸 500），便于手机端「检查推送」直接显示后端报错（如 KV 未绑定 / put 失败）。
+            return c.json({ error: 'subscribe failed', detail: String(e?.message || e), hasKV: !!(c.env && c.env.OUTBOX) }, 500);
+        }
         return c.json({ ok: true });
     });
 
